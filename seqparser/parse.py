@@ -68,16 +68,14 @@ class Parser:
         # the interpretation of the following code is that for the lifetime of the filebuffer 
         # returned by the `open` function it will be accessible as the variable `f_obj`, of type io.TextIOWrapper
         with open(self.filename, "r") as f_obj:
-            
-            # this loop will run forever or return an error, depending on your implementations of _get_record
-            # but we will leave it up to you to implement the fix! 
-
-            # hint: when reading a file, how do we know when to stop reading? what keyword should we use to stop a loop?
-
             while True:
-                rec = self.get_record(f_obj)
-                # TODO: stop the loop
-                yield rec
+                try:
+                    rec = self.get_record(f_obj)
+                    if rec is None:  # If None is returned, stop iteration
+                        break
+                    yield rec
+                except StopIteration:
+                    break
 
     def _get_record(self, f_obj: io.TextIOWrapper) -> Union[Tuple[str, str], Tuple[str, str, str]]:
         """
