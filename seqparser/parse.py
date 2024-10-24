@@ -119,7 +119,36 @@ class FastqParser(Parser):
     Fastq Specific Parsing 
     """
     def _get_record(self, f_obj: io.TextIOWrapper) -> Tuple[str, str, str]:
-        """
-        TODO: returns the next fastq record as a 3-tuple of (header, sequence, quality)
-        """
+        # Read header line
+        header = f_obj.readline().strip()
+        if not header:  # Empty line or end of file
+            return None
+            
+        if not header.startswith('@'):
+            raise ValueError(f"Invalid FASTQ format: Expected header starting with '@', got {header}")
+            
+        # Remove the '@' from header
+        header = header[1:]
+        
+        # Read sequence line
+        sequence = f_obj.readline().strip()
+        if not sequence:
+            raise ValueError(f"Invalid FASTQ format: Missing sequence for header {header}")
+            
+        # Read separator line
+        separator = f_obj.readline().strip()
+        if not separator == '+':
+            raise ValueError(f"Invalid FASTQ format: Expected '+' separator, got {separator}")
+            
+        # Read quality line
+        quality = f_obj.readline().strip()
+        if not quality:
+            raise ValueError(f"Invalid FASTQ format: Missing quality scores for header {header}")
+            
+        # Verify sequence and quality lengths match
+        if len(sequence) != len(quality):
+            raise ValueError(f"Invalid FASTQ format: Sequence length ({len(sequence)}) "
+                           f"does not match quality length ({len(quality)})")
+        
+        return header, sequence, quality
 
