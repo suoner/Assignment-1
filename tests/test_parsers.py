@@ -22,14 +22,22 @@ def test_freebie_parser_2():
 
         
 def test_FastaParser():
-    """
-    TODO: Write your unit test for your FastaParser
-    class here. You should generate an instance of
-    your FastaParser class and assert that it properly
-    reads in the example Fasta File.
-    """
-    pass
+    # Initialize FastaParser with the test file
+    parser = FastaParser("data/test.fa")
+ 
+    # List to store the parsed records (I'm turning the generator into a list here)
+    parsed_records = list(parser)
 
+    print(parsed_records)
+
+    # A couple snippets from the test file I manually wrote to test here!
+    expected_output = [
+        ('seq0', 'TGATTGAATCTTTTGAGGGTCACGGCCCGGAAGCCAGAATTTCGGGGTCCTCTGTGGATATTAATCGAGCCCACACGGTGTGAGTTCAGCGGCCCCCGCA'),
+        ('seq1', 'TCCGCCCGCTGTGCTGACGAGACTAGCAGGGAAATAAATAGAGGGTTTAGTTATACTCAGTAGGCAGTTCGATGGCTTATATCTAACTTCTTATTCCGAT')
+    ]
+
+    assert parsed_records[0] == expected_output[0]
+    assert parsed_records[1] == expected_output[1]
 
 def test_FastqParser():
     """

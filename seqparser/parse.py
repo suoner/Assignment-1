@@ -94,8 +94,24 @@ class FastaParser(Parser):
     """
     def _get_record(self, f_obj: io.TextIOWrapper) -> Tuple[str, str]:
         """
-        TODO: returns the next fasta record as a 2-tuple of (header, sequence)
+        Returns the next fasta record as a 2-tuple of (header, sequence)
         """
+        header = f_obj.readline().strip()
+        if not header:  # Empty line or end of file
+            return None
+            
+        if not header.startswith('>'):
+            raise ValueError(f"Invalid FASTA format: Expected header starting with '>', got {header}")
+            
+        # Remove the '>' from header
+        header = header[1:]
+        
+        # Read sequence line
+        sequence = f_obj.readline().strip()
+        if not sequence:
+            raise ValueError(f"Invalid FASTA format: Missing sequence for header {header}")
+            
+        return header, sequence
 
 
 class FastqParser(Parser):
