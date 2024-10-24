@@ -1,5 +1,5 @@
 # write tests for parsers
-
+import pytest
 from seqparser import (
         FastaParser,
         FastqParser)
@@ -61,3 +61,31 @@ def test_FastqParser():
     assert parsed_records[0] == expected_output[0]
     assert parsed_records[1] == expected_output[1]
     assert parsed_records[2] == expected_output[2]
+
+
+def test_FastaParser_negative():
+    # Test non-existent file
+    with pytest.raises(FileNotFoundError):
+        parser = FastaParser("nonexistent.fa")
+        list(parser) # this apparently calls the generator
+        
+    # Test invalid file format
+    with pytest.raises(ValueError):
+        parser = FastaParser("data/invalid.fa")  # File without any '>' headers
+        list(parser)
+
+def test_FastqParser_negative():
+    # Test non-existent file
+    with pytest.raises(FileNotFoundError):
+        parser = FastqParser("nonexistent.fq")
+        list(parser)
+        
+    # Test mismatched sequence/quality lengths
+    with pytest.raises(ValueError):
+        parser = FastqParser("data/invalid.fq")  # File with mismatched lengths
+        list(parser)
+        
+    # Test missing quality scores
+    with pytest.raises(ValueError):
+        parser = FastqParser("data/missing_quality.fq")  # File missing quality scores
+        list(parser)
